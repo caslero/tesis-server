@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 app.use('/favicon.ico', express.static(path.join(__dirname, 'favicon.ico')));
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://tesis-daniel.vercel.app"],
     methods: ["GET", "POST", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
