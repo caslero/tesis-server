@@ -24,19 +24,20 @@ export class EmpleadosControlador {
         sector,
         direccion,
         fechaIngreso,
-        tipoUser
+        tipoUser,
       } = req.body;
 
       const tokenUnicoValidarEmpleado = tokenValidarUsuario(10);
-      
 
       if (cedula) {
-        sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+        const casa = sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+
         return res.status(201).json({
           status: "ok",
           numero: 1,
           message: "Empleado registrado...",
           tokenValidacion: tokenUnicoValidarEmpleado,
+          mail: casa
         });
       } else {
         return res.status(400).json({
@@ -44,6 +45,7 @@ export class EmpleadosControlador {
           numero: 0,
           message: "Error al registrar...",
           tokenValidacion: tokenUnicoValidarEmpleado,
+          mail: casa
         });
       }
     } catch (error) {
@@ -51,30 +53,30 @@ export class EmpleadosControlador {
     }
   }
 
-   /** La funcion autenticarUsuario se encarga de autenticar el usuario mediante el
+  /** La funcion autenticarUsuario se encarga de autenticar el usuario mediante el
     token que se envio al correo y guarda la fecha cuando se autentico */
-    static async autenticarUsuario(req, res) {
-      try {
-        const tokenAuth = req.body.token;
-  
-        if (tokenAuth.length != 16) {
-          res.send({
-            status: "error",
-            numero: 0,
-            message: "Token invalido",
+  static async autenticarUsuario(req, res) {
+    try {
+      const tokenAuth = req.body.token;
+
+      if (tokenAuth.length != 16) {
+        res.send({
+          status: "error",
+          numero: 0,
+          message: "Token invalido",
+        });
+      } else {
+        //const autenticado = await UsuarioModelo.estaAutenticado(tokenAuth);
+
+        const autenticado = 1;
+        if (autenticado === 1) {
+          return res.status(201).json({
+            status: "ok",
+            numero: 1,
+            message: "token valido",
           });
-        } else {
-          //const autenticado = await UsuarioModelo.estaAutenticado(tokenAuth);
-  
-          const autenticado = 1;
-          if (autenticado === 1) {
-            return res.status(201).json({
-              status: "ok",
-              numero: 1,
-              message: "token valido",
-            });
-          }
-          /**
+        }
+        /**
             if (autenticado === 1) {
               res.send({
                 status: "ok",
@@ -100,44 +102,42 @@ export class EmpleadosControlador {
               });
             }
           */
-        }
-      } catch (error) {
-        console.log("Error token invalido: " + error);
-        return res.status(400).send({
-          status: "error",
-          numero: 0,
-          message: "Token invalido",
-        });
       }
+    } catch (error) {
+      console.log("Error token invalido: " + error);
+      return res.status(400).send({
+        status: "error",
+        numero: 0,
+        message: "Token invalido",
+      });
     }
+  }
 
   static async crearClave(req, res) {
     try {
       const { clave, confirmarClave } = req.body;
 
-      console.log('Clave: ' + clave);
-      console.log('Clave confirmar: ' + confirmarClave);
+      console.log("Clave: " + clave);
+      console.log("Clave confirmar: " + confirmarClave);
 
       if (clave) {
         return res.status(201).json({
-          status: 'ok',
+          status: "ok",
           numero: 1,
-          message: 'Clave creada con exito...'
-        })
+          message: "Clave creada con exito...",
+        });
       } else {
         return res.status(400).json({
-          status: 'error',
+          status: "error",
           numero: 0,
-          message: 'Clave no creada...'
-        })
+          message: "Clave no creada...",
+        });
       }
-      
     } catch (error) {
-      console.log('Error al crear clave: ' + error);      
+      console.log("Error al crear clave: " + error);
     }
   }
 }
-
 
 /** 
         console.log('Cedula: ' + cedula);
