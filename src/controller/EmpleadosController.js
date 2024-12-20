@@ -26,7 +26,7 @@ export class EmpleadosControlador {
         tipoUser
       } = req.body;
 
-      sendMail(correo, nombre, token);
+      //sendMail(correo, nombre, token);
       const tokenUnicoValidarEmpleado = tokenValidarUsuario(10);
       
 
