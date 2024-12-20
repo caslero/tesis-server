@@ -16,6 +16,8 @@ let transporte = nodemailer.createTransport({
 });
 
 export async function sendMail(correo, nombre, validarUsuario) {
+  console.log(correo, nombre, validarUsuario);
+  
   const info = await transporte.sendMail({
     from: `${process.env.REMITENTE} <${process.env.CORREO_REMITENTE}>`,
     to: `${correo}`,

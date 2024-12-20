@@ -30,15 +30,13 @@ export class EmpleadosControlador {
       const tokenUnicoValidarEmpleado = tokenValidarUsuario(10);
 
       if (cedula) {
-        const casa = sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
-        console.log('Cedula: ' + cedula);
-
+        sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+        
         return res.status(201).json({
           status: "ok",
           numero: 1,
           message: "Empleado registrado...",
           tokenValidacion: tokenUnicoValidarEmpleado,
-          mail: casa
         });
       } else {
         return res.status(400).json({
@@ -46,7 +44,6 @@ export class EmpleadosControlador {
           numero: 0,
           message: "Error al registrar...",
           tokenValidacion: tokenUnicoValidarEmpleado,
-          mail: casa
         });
       }
     } catch (error) {
