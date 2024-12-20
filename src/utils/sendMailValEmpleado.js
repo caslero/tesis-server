@@ -4,9 +4,6 @@ import { htmlEmail } from "../plantillas/mailValEmpleado.js";
 
 dotenv.config();
 
-console.log('Host de nodemailer: ' + process.env.HOST);
-
-
 /** La const transporte es la encargada de hacer la conexion con mailtrap, la
         cual es un simulador para enviar correos */
 let transporte = nodemailer.createTransport({
@@ -18,13 +15,12 @@ let transporte = nodemailer.createTransport({
   },
 });
 
-
 export async function sendMail(correo, nombre, validarUsuario) {
-    const info = await transporte.sendMail({
-      from: `${process.env.REMITENTE} <${process.env.CORREO_REMITENTE}>`,
-      to: `${correo}`,
-      subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
-      html: `${htmlEmail(validarUsuario)}`,
-    });
-    return info;
-  }
+  const info = await transporte.sendMail({
+    from: `${process.env.REMITENTE} <${process.env.CORREO_REMITENTE}>`,
+    to: `${correo}`,
+    subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
+    html: `${htmlEmail(validarUsuario)}`,
+  });
+  return info;
+}
