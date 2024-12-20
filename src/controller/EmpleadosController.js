@@ -1,4 +1,5 @@
 import { tokenValidarUsuario } from "../utils/tokenValidarEmpleado.js";
+import { sendMail } from "../utils/sendMailValEmpleado.js";
 
 /** Aqui comenzaremos a trabajarpara el registro de usuarios, cosa que ya
  recibe datos desde el front-end y retorna una respuesta. Vamos agregar una
@@ -26,11 +27,11 @@ export class EmpleadosControlador {
         tipoUser
       } = req.body;
 
-      //sendMail(correo, nombre, token);
       const tokenUnicoValidarEmpleado = tokenValidarUsuario(10);
       
 
       if (cedula) {
+        sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
         return res.status(201).json({
           status: "ok",
           numero: 1,
