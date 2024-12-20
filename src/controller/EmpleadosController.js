@@ -31,6 +31,9 @@ export class EmpleadosControlador {
 
       if (cedula) {
         const casa = sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+        console.log('Cedula: ' + cedula);
+        console.log('Enviando correo: ' + casa);
+        console.log(casa);        
 
         return res.status(201).json({
           status: "ok",

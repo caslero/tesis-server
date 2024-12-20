@@ -4,17 +4,14 @@ import { htmlEmail } from "../plantillas/mailValEmpleado.js";
 
 dotenv.config();
 
-console.log(process.env.HOST, process.env.PORT,);
-
-
 /** La const transporte es la encargada de hacer la conexion con mailtrap, la
         cual es un simulador para enviar correos */
 let transporte = nodemailer.createTransport({
-  host: process.env.HOST,
-  port: process.env.PORT,
+  host: `${process.env.HOST}`,
+  port: `${process.env.PORT}`,
   auth: {
-    user: process.env.USER,
-    pass: process.env.PASS,
+    user: `${process.env.USER}`,
+    pass: `${process.env.PASS}`,
   },
 });
 
