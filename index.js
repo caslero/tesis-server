@@ -24,6 +24,14 @@ app.use(
     credentials: true,
   })
 )
+
+//Settings o Configuraciones
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://tesis-daniel.vercel.app", "http://localhost:5173");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 app.use(express.json()); 
 
 app.use(rutas)
@@ -32,9 +40,3 @@ app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto: ${port}`);
 });
 
-// //Settings o Configuraciones
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "https://chat-vista-one.vercel.app", "https://chat-vista-7ujo.onrender.com", "http://localhost:5173");
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
