@@ -56,17 +56,16 @@ export class EmpleadosControlador {
   static async autenticarUsuario(req, res) {
     try {
       const tokenAuth = req.body.token;
-      console.log('Retornar respuesta: ' + tokenAuth);
 
       if (tokenAuth.length != 16) {
-        return res.send({
+        return res.status(400).json({
           status: "error",
           numero: 0,
           message: "Token invalido",
         });
       } else {
         //const autenticado = await UsuarioModelo.estaAutenticado(tokenAuth);
-        
+
         const autenticado = 1;
         if (autenticado === 1) {
           return res.status(201).json({
