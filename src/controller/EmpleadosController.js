@@ -56,6 +56,7 @@ export class EmpleadosControlador {
   static async autenticarUsuario(req, res) {
     try {
       const tokenAuth = req.body.token;
+      console.log('Retornar respuesta: ' + tokenAuth);
 
       if (tokenAuth.length != 16) {
         return res.send({
@@ -65,7 +66,7 @@ export class EmpleadosControlador {
         });
       } else {
         //const autenticado = await UsuarioModelo.estaAutenticado(tokenAuth);
-
+        
         const autenticado = 1;
         if (autenticado === 1) {
           return res.status(201).json({
