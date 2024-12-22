@@ -17,6 +17,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "nodemailer": "^6.9.16",
+    "resend": "^4.0.1",
     "tesis_servidor": "file:"
   },
   "devDependencies": {
