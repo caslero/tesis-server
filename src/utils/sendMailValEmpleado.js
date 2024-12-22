@@ -6,28 +6,28 @@ import { htmlEmail } from "../plantillas/mailValEmpleado.js";
 dotenv.config();
 
 /**
-const transporte = nodemailer.createTransport({
-  host: "mail.protonmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.PROTONMAIL_USUARIO,
-    pass: process.env.PROTONMAIL_PASSWORD,
-  },
-});
-
-export async function sendMail(correo, nombre, validarUsuario) {
-  console.log(correo, nombre, validarUsuario);
-
-  const info = await transporte.sendMail({
-    from: `${process.env.NOMBRE_REMITENTE} <${process.env.CORREO_REMITENTE}>`,
-    to: `${correo}`,
-    subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
-    html: `${htmlEmail(validarUsuario)}`,
+  const transporte = nodemailer.createTransport({
+    host: "mail.protonmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.PROTONMAIL_USUARIO,
+      pass: process.env.PROTONMAIL_PASSWORD,
+    },
   });
-  return info;
-}
- */
+
+  export async function sendMail(correo, nombre, validarUsuario) {
+    console.log(correo, nombre, validarUsuario);
+
+    const info = await transporte.sendMail({
+      from: `${process.env.NOMBRE_REMITENTE} <${process.env.CORREO_REMITENTE}>`,
+      to: `${correo}`,
+      subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
+      html: `${htmlEmail(validarUsuario)}`,
+    });
+    return info;
+  }
+*/
 
 
 
