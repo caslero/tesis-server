@@ -58,7 +58,7 @@ export class EmpleadosControlador {
       const tokenAuth = req.body.token;
 
       if (tokenAuth.length != 16) {
-        res.send({
+        return res.send({
           status: "error",
           numero: 0,
           message: "Token invalido",
