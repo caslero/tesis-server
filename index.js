@@ -25,12 +25,14 @@ app.use(
   })
 )
 
+/**
 //Settings o Configuraciones
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://tesis-daniel.vercel.app", "http://localhost:5173");
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+*/
 
 app.use(express.json()); 
 
