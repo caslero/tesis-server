@@ -92,7 +92,7 @@ export async function sendMail(correo, nombre, validarUsuario) {
   console.log(correo, nombre, validarUsuario);
   
   const info = await transporte.sendMail({
-    from: `${process.env.REMITENTE} <${process.env.CORREO_REMITENTE}>`,
+    from: `${process.env.NOMBRE_REMITENTE} <${process.env.CORREO_REMITENTE}>`,
     to: `${correo}`,
     subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
     html: `${htmlEmail(validarUsuario)}`,

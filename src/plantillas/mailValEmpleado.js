@@ -21,7 +21,7 @@ dotenv.config();
                   </div>
                   <div>
                       <p>Haz click en el siguiente enlace para crear una contraseña</p>
-                      <a href="${process.env.DIRECCION_LOCAL}/validar/${validarEmpleado}">Click aqui para crear su clave de acceso a Nutrivida</a>
+                      <a href="${process.env.DIRECCION_LOCAL}/validar/${validarEmpleado}">Click aqui para crear su clave de acceso a Nutrivida: ${validarEmpleado}</a>
                   </div>
               </section>    
           </body>
