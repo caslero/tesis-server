@@ -3,21 +3,21 @@ import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import { htmlEmail } from "../plantillas/mailValEmpleado.js";
 
-
 dotenv.config();
 
-
 const transporte = nodemailer.createTransport({
-  service: 'gmail',
+  host: "mail.protonmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.CORREO_REMITENTE,
-    pass: process.env.PASSWORD_REMITENTE
-  }
+    user: process.env.PROTONMAIL_USUARIO,
+    pass: process.env.PROTONMAIL_PASSWORD,
+  },
 });
 
 export async function sendMail(correo, nombre, validarUsuario) {
   console.log(correo, nombre, validarUsuario);
-  
+
   const info = await transporte.sendMail({
     from: `${process.env.NOMBRE_REMITENTE} <${process.env.CORREO_REMITENTE}>`,
     to: `${correo}`,
@@ -26,8 +26,6 @@ export async function sendMail(correo, nombre, validarUsuario) {
   });
   return info;
 }
-
-
 
 /** 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -49,8 +47,6 @@ export async function sendMail(correo, nombre, validarUsuario) {
   }
 }
 */
-
-
 
 /** La const transporte es la encargada de hacer la conexion con mailtrap, la
         cual es un simulador para enviar correos
@@ -76,7 +72,6 @@ export async function sendMail(correo, nombre, validarUsuario) {
   return info;
 }
  */
-
 
 /** 
 const transporte = nodemailer.createTransport({
