@@ -97,6 +97,6 @@ export async function sendMail(correo, nombre, validarUsuario) {
     subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
     html: `${htmlEmail(validarUsuario)}`,
   });
-  return info;
+  return info; 
 }
 
