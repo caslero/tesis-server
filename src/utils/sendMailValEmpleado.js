@@ -5,6 +5,7 @@ import { htmlEmail } from "../plantillas/mailValEmpleado.js";
 
 dotenv.config();
 
+/**
 const transporte = nodemailer.createTransport({
   host: "mail.protonmail.com",
   port: 465,
@@ -26,6 +27,9 @@ export async function sendMail(correo, nombre, validarUsuario) {
   });
   return info;
 }
+ */
+
+
 
 /** 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -73,7 +77,7 @@ export async function sendMail(correo, nombre, validarUsuario) {
 }
  */
 
-/** 
+
 const transporte = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -95,4 +99,4 @@ export async function sendMail(correo, nombre, validarUsuario) {
   });
   return info;
 }
-*/
+
