@@ -1,53 +1,70 @@
-import { tokenValidarUsuario } from "../utils/tokenValidarEmpleado.js";
-import { sendMail } from "../utils/sendMailValEmpleado.js";
+import { ModeloEmpleados } from "../model/EmpleadosModelo.js";
+import { EnviarCorreo } from "../services/sendMailValEmpleado.js";
+import { Tokens } from "../services/tokens.js";
+import { validarCampos } from "../utils/validarCamposEmpleados.js";
+import { validarClaveAccesoEmpleado } from "../utils/validarClaveAccesoEmpleado.js";
+import bcryptjs from "bcryptjs";
+import dotenv from "dotenv";
 
-/** Aqui comenzaremos a trabajarpara el registro de usuarios, cosa que ya
- recibe datos desde el front-end y retorna una respuesta. Vamos agregar una
- funcion de correo para que a la hora de registrar el empleado envie un enlace
- al correo para que el empleado cree una clave para tener un usuario para
- entrar al sistema 
- */
+dotenv.config();
+
+/** */
 export class EmpleadosControlador {
   static async registrarEmpleado(req, res) {
     try {
-      const {
-        cedula,
-        primerNombre,
-        segundoNombre,
-        primerApellido,
-        segundoApellido,
-        correo,
-        telefono,
-        estado,
-        municipio,
-        parroquia,
-        sector,
-        direccion,
-        fechaIngreso,
-        tipoUser,
-      } = req.body;
+      const { cedula, primerNombre, correo } = req.body;
 
-      const tokenUnicoValidarEmpleado = tokenValidarUsuario(10);
+      const validandoCampos = validarCampos(req);
+      const existeEmpleado = await ModeloEmpleados.empleadoExiste(cedula);
 
-      if (cedula) {
-        sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
-        
+      if (existeEmpleado === 1) {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Empleado ya existe...",
+        });
+      }
+
+      if (validandoCampos.status === "error") {
+        return res.status(400).json({
+          status: validandoCampos.status,
+          numero: validandoCampos.numero,
+          message: validandoCampos.message,
+        });
+      }
+
+      const tokenUnicoValidarEmpleado = Tokens.tokenValidarUsuario(10);
+      /** Debemos consultar el id del usuario activo, mientras lo vamos
+        a simular */
+      const id_user = 1;
+      const crearEmpleado = await ModeloEmpleados.registrarEmpleado(
+        req,
+        tokenUnicoValidarEmpleado,
+        id_user
+      );
+
+      if (crearEmpleado) {
+        EnviarCorreo.sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+
         return res.status(201).json({
           status: "ok",
           numero: 1,
-          message: "Empleado registrado...",
-          tokenValidacion: tokenUnicoValidarEmpleado,
+          message: "Empleado registrado con éxito...",
         });
       } else {
         return res.status(400).json({
           status: "error",
           numero: 0,
-          message: "Error al registrar...",
-          tokenValidacion: tokenUnicoValidarEmpleado,
+          message: "Error al registrar el empleado...",
         });
       }
     } catch (error) {
       console.log("Error al guardar empleado: " + error);
+      return res.status(500).json({
+        status: "error",
+        numero: 0,
+        message: "Error, no se guardo el empleado...",
+      });
     }
   }
 
@@ -55,101 +72,140 @@ export class EmpleadosControlador {
     token que se envio al correo y guarda la fecha cuando se autentico */
   static async autenticarUsuario(req, res) {
     try {
-      const tokenAuth = req.body.token;
+      const { token } = req.body;
 
-      if (tokenAuth.length != 16) {
+      if (token && token.length != 16) {
         return res.status(400).json({
           status: "error",
           numero: 0,
           message: "Token invalido",
         });
-      } else {
-        //const autenticado = await UsuarioModelo.estaAutenticado(tokenAuth);
+      }
 
-        const autenticado = 1;
-        if (autenticado === 1) {
-          return res.status(201).json({
-            status: "ok",
-            numero: 1,
-            message: "token valido",
-          });
-        }
-        /**
-            if (autenticado === 1) {
-              res.send({
-                status: "ok",
-                numero: 1,
-                message: "Usuario ya esta autenticado",
-              });
-            } else if (autenticado === 2) {
-              const tokenValidado = await UsuarioModelo.autenticarUsuario(
-                tokenAuth
-              );
-              if (tokenValidado) {
-                res.send({
-                  status: "ok",
-                  numero: 1,
-                  message: "Autenticado con exito",
-                });
-              }
-            } else {
-              res.send({
-                status: "error",
-                numero: 0,
-                message: "Fallo al autenticar",
-              });
-            }
-          */
+      const autenticado = await ModeloEmpleados.comprobarToken(token);
+
+      if (autenticado && autenticado[0].result === 0) {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Token invalido",
+          redirect: "/",
+        });
+      } else if (autenticado && autenticado[0].result === 1) {
+        return res.status(201).json({
+          status: "ok",
+          numero: 1,
+          message: "token valido",
+        });
+      } else {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Token usado",
+          redirect: "/",
+        });
       }
     } catch (error) {
       console.log("Error token invalido: " + error);
-      return res.status(400).send({
+      return res.status(500).send({
         status: "error",
         numero: 0,
         message: "Token invalido",
+        redirect: "/",
       });
     }
   }
 
   static async crearClave(req, res) {
     try {
-      const { clave, confirmarClave } = req.body;
+      const { clave, token } = req.body;
 
-      console.log("Clave: " + clave);
-      console.log("Clave confirmar: " + confirmarClave);
+      const claveValidada = validarClaveAccesoEmpleado(req);
 
-      if (clave) {
+      if (claveValidada.status === "error") {
+        return res.status(400).json({
+          status: claveValidada.status,
+          numero: claveValidada.numero,
+          message: claveValidada.message,
+        });
+      }
+
+      const encriptado = await bcryptjs.genSalt(5);
+      const claveEncriptada = await bcryptjs.hash(clave, encriptado);
+
+      const crearClave = await ModeloEmpleados.crearClaveEmpleado(
+        claveEncriptada,
+        token
+      );
+
+      if (crearClave) {
         return res.status(201).json({
           status: "ok",
           numero: 1,
           message: "Clave creada con exito...",
+          redirect: "/",
         });
       } else {
         return res.status(400).json({
           status: "error",
           numero: 0,
-          message: "Clave no creada...",
+          message: "Error, no se creo la clave...",
         });
       }
     } catch (error) {
       console.log("Error al crear clave: " + error);
+      return res.status(500).json({
+        status: "error",
+        numero: 0,
+        message: "Error al crear clave...",
+      });
+    }
+  }
+
+  /** La funcion verificarAutenticacion se encarga de recibir el token y
+    decodificarlo, si es corecto se inicia sesion */
+  static async verificarAutenticacion(req, res) {
+    try {
+      const { token } = req.body;
+
+      //const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJjYXJsb3NqcGVyYXphYkBnbWFpbC5jb20iLCJpYXQiOjE3MzY3MTY5MjEsImV4cCI6MTczNjgwMzMyMX0.yUWR6EKSxIs2EPCWPutDBcRTa-7iMyUpHPDjhfv0SY1'
+
+      if (!token) {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error token vacio...",
+          isValido: false,
+        });
+      }
+
+      const decodificada = Tokens.descifrarToken(token);
+
+      if (decodificada.status === "ok") {
+        return res.status(201).json({
+          status: decodificada.status,
+          numero: decodificada.numero,
+          message: decodificada.message,
+          isValido: decodificada.isValido,
+          correo: decodificada.correo,
+        });
+      } else {
+        return res.status(400).json({
+          status: decodificada.status,
+          numero: decodificada.numero,
+          message: decodificada.message,
+          isValido: decodificada.isValido,
+          correo: decodificada.correo,
+        });
+      }
+    } catch (error) {
+      console.log("Error, al verificar token...");
+      return res.status(500).json({
+        status: "error",
+        numero: 0,
+        message: "Error al procesar token...",
+        isValido: false,
+      });
     }
   }
 }
-
-/** 
-        console.log('Cedula: ' + cedula);
-        console.log('Primer nombre: ' + primerNombre);
-        console.log('Segundo nombre: ' + segundoNombre);
-        console.log('Primer apellido: ' + primerApellido);
-        console.log('Segundo apellido: ' + segundoApellido);
-        console.log('Correo: ' + correo);
-        console.log('Telefono: ' + telefono);
-        console.log('Estado: ' + estado);
-        console.log('Municipio: ' + municipio);
-        console.log('Parroquia: ' + parroquia);
-        console.log('Sector: ' + sector);
-        console.log('Direccion: ' + direccion);
-        console.log('Fecha de ingreso: ' + fechaIngreso);
-        console.log('Tipo de usuario: ' + tipoUser);
-      */

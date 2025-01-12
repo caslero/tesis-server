@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { EmpleadosControlador } from "../controller/EmpleadosController.js";
+import { LoginControlador } from "../controller/LoginController.js";
 
 export const rutas = Router();
 
@@ -10,3 +11,5 @@ rutas.get("/", (req, res) => {
 rutas.post("/api/registrar-empleado", EmpleadosControlador.registrarEmpleado);
 rutas.post("/validar/token", EmpleadosControlador.autenticarUsuario);
 rutas.post("/api/registrar-clave", EmpleadosControlador.crearClave);
+rutas.post("/api/verificar-autenticacion", EmpleadosControlador.verificarAutenticacion);
+rutas.post("/api/iniciar-sesion", LoginControlador.iniciarSesion);
