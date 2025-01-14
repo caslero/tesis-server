@@ -22,7 +22,7 @@ async function crearBaseDeDatos() {
   try {
     const client = await conexion.connect();
     const result = await client.query(
-      `CREATE DATABASE ${nombreDB}`
+      `CREATE DATABASE ${nombreDB}` 
     );
     console.log("Base de datos verificada/creada...");
     client.release();
