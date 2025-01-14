@@ -17,6 +17,7 @@ export const conexion = new Pool({
 });
 
 
+
 async function crearBaseDeDatos() {
   const nombreDB = process.env.POSTGRES_URL_DATABASE;
   try {
