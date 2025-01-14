@@ -19,12 +19,13 @@ export class LoginControlador {
       }
 
       const usuarioExiste = await ModeloEmpleados.datosInicioSesion(correo);
+      
 
       if (!usuarioExiste) {
         return res.status(400).json({
           status: "error",
           numero: 0,
-          message: "Credenciales invalidas...",
+          message: "Credenciales invalidadas...",
         });
       }
 

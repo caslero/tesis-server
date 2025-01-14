@@ -46,7 +46,7 @@ export class ModeloEmpleados {
     return new Promise((resolve) => {
       conexion.query(existeEmpleado(cedula), function (error, resultado) {
         if (!error) {
-          const existe = resultado[0].count;
+          const existe = resultado.rows[0].count > 0 ? 1 : 0;
           resolve(existe);
         } else {
           console.log("Error en la consulta: ", error);
@@ -62,7 +62,7 @@ export class ModeloEmpleados {
     return new Promise((resolve) => {
       conexion.query(tokenComprobar(token), function (error, resultado) {
         if (!error) {
-          resolve(resultado);
+          resolve(resultado.rows[0]);
         } else {
           resolve(false);
         }
@@ -93,7 +93,7 @@ export class ModeloEmpleados {
     return new Promise((resolve) => {
       conexion.query(inicioSesionDatos(correo), function (error, resultado) {
         if (!error) {
-          resolve(resultado[0]);
+          resolve(resultado.rows[0]);
         } else {
           resolve(false);
         }

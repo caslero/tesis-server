@@ -12,8 +12,9 @@ dotenv.config();
 export class EmpleadosControlador {
   static async registrarEmpleado(req, res) {
     try {
-      const { cedula, primerNombre, correo } = req.body;
+      const { cedula, primerNombre, correo, token } = req.body;
 
+      
       const validandoCampos = validarCampos(req);
       const existeEmpleado = await ModeloEmpleados.empleadoExiste(cedula);
 
@@ -34,14 +35,28 @@ export class EmpleadosControlador {
       }
 
       const tokenUnicoValidarEmpleado = Tokens.tokenValidarUsuario(10);
-      /** Debemos consultar el id del usuario activo, mientras lo vamos
-        a simular */
-      const id_user = 1;
+      
+      
+      const tokenDecodificado = Tokens.descifrarToken(token);
+      
+      if (tokenDecodificado.status === "error") {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error de credenciales...",
+        });
+      }
+
+      const { id }  = await ModeloEmpleados.datosInicioSesion(tokenDecodificado.correo);
+     
       const crearEmpleado = await ModeloEmpleados.registrarEmpleado(
         req,
         tokenUnicoValidarEmpleado,
-        id_user
+        id
       );
+
+      console.log(crearEmpleado);
+      
 
       if (crearEmpleado) {
         EnviarCorreo.sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
@@ -83,15 +98,14 @@ export class EmpleadosControlador {
       }
 
       const autenticado = await ModeloEmpleados.comprobarToken(token);
-
-      if (autenticado && autenticado[0].result === 0) {
+      if (autenticado && autenticado.result === 0) {
         return res.status(400).json({
           status: "error",
           numero: 0,
           message: "Token invalido",
           redirect: "/",
         });
-      } else if (autenticado && autenticado[0].result === 1) {
+      } else if (autenticado && autenticado.result === 1) {
         return res.status(201).json({
           status: "ok",
           numero: 1,

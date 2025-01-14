@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
     "resend": "^4.0.1",
     "tesis_servidor": "file:"
   },

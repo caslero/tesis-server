@@ -1,7 +1,7 @@
 /** guardarEmpleado es la sentencia sql para registrar un empleado */
 export function guardarEmpleado(req, token, id_user) {
   const { cedula, primerNombre, segundoNombre, primerApellido, segundoApellido, correo, telefono, estado, municipio, parroquia, sector, direccion, fechaIngreso, tipoUser } = req.body;
-  const registrarEmpleado = `INSERT INTO empleados(cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, correo, telefono, estado, municipio, parroquia, sector, direccion, fecha_ingreso, tipo_usuario, token, clave, validar, fecha_clave_creada, id_user_crear, fecha_creado) VALUES ('${cedula}', '${primerNombre}', '${segundoNombre}', '${primerApellido}', '${segundoApellido}', '${correo}', '${telefono}', '${estado}', '${municipio}', '${parroquia}', '${sector}', '${direccion}', '${fechaIngreso}', '${tipoUser}', '${token}', '', 'false', '', '${id_user}', NOW())`;
+  const registrarEmpleado = `INSERT INTO empleados(cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, correo, telefono, estado, municipio, parroquia, sector, direccion, fecha_ingreso, tipo_usuario, token, clave, validar, fecha_clave_creada, id_user_crear, fecha_creado) VALUES ('${cedula}', '${primerNombre}', '${segundoNombre}', '${primerApellido}', '${segundoApellido}', '${correo}', '${telefono}', '${estado}', '${municipio}', '${parroquia}', '${sector}', '${direccion}', '${fechaIngreso}', '${tipoUser}', '${token}', '', 'false', null, '${id_user}', NOW())`;
   return registrarEmpleado;
 }
 
@@ -14,7 +14,7 @@ export function datosUsuarioActivo(correo) {
 /** inicioSesionDatos es la sentencia sql para traer los datos para el 
   inicio de sesion */
 export function inicioSesionDatos(correo) {
-  const usuarioActivo = `SELECT correo, clave, tipo_usuario FROM empleados WHERE correo = '${correo}'`;
+  const usuarioActivo = `SELECT id, correo, clave, tipo_usuario FROM empleados WHERE correo = '${correo}'`;
   return usuarioActivo;
 }
 
@@ -27,24 +27,23 @@ export function existeEmpleado(cedula) {
 
 /** existeEmpleado es la sentencia sql para consultar si existe o no un empleado*/
 export function tokenComprobar(token) {
-  //const comprobarToken = `SELECT COUNT(*) as count FROM empleados WHERE token = '${token}'`;
   const comprobarToken = `
-  SELECT 
-    CASE 
-      WHEN COUNT(*) = 0 THEN 0
-      WHEN validar = 0 THEN 1
-      WHEN validar = 1 THEN 2
-    END as result 
-  FROM empleados 
-  WHERE token = '${token}';
-`;
-
+    SELECT 
+      CASE 
+        WHEN COUNT(*) = 0 THEN 2
+        WHEN BOOL_OR(validar = false) THEN 1
+        ELSE 0
+      END as result 
+    FROM empleados 
+    WHERE token = '${token}';
+  `;
   return comprobarToken;
 }
 
+
 /** guardarEmpleado es la sentencia sql para registrar un empleado */
 export function claveEmpleadoCrear(clave, token) {
-  const crearClaveEmpleado = `UPDATE empleados SET clave = '${clave}', validar = '1', fecha_clave_creada = NOW() WHERE token = '${token}'`;
+  const crearClaveEmpleado = `UPDATE empleados SET clave = '${clave}', validar = 'true', fecha_clave_creada = NOW() WHERE token = '${token}'`;
   return crearClaveEmpleado;
 }
 

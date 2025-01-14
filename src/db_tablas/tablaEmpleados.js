@@ -1,6 +1,6 @@
 import { conexion } from "../db/conexion.js";
 
-export function crearTablaEmpleados() {
+export function crearTablaEmpleadosLocal() {
   const tablaEmpleados = "empleados";
   const consulta = `CREATE TABLE IF NOT EXISTS ${tablaEmpleados} (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -33,3 +33,44 @@ export function crearTablaEmpleados() {
     }
   });
 }
+
+
+export async function crearTablaEmpleados() {
+  const tablaEmpleados = "empleados";
+  const consulta = `
+    SET search_path TO public;
+    CREATE TABLE IF NOT EXISTS ${tablaEmpleados} (
+      id SERIAL PRIMARY KEY,
+      cedula VARCHAR(20) NOT NULL UNIQUE,
+      primer_nombre VARCHAR(50) NOT NULL,
+      segundo_nombre VARCHAR(50),
+      primer_apellido VARCHAR(50) NOT NULL,
+      segundo_apellido VARCHAR(50),
+      correo VARCHAR(100) UNIQUE,
+      telefono VARCHAR(15) UNIQUE,
+      estado VARCHAR(50),
+      municipio VARCHAR(50),
+      parroquia VARCHAR(50),
+      sector VARCHAR(50),
+      direccion TEXT,
+      fecha_ingreso TIMESTAMP,
+      tipo_usuario VARCHAR(13),
+      token VARCHAR(16),
+      clave VARCHAR(100),
+      validar BOOLEAN,
+      fecha_clave_creada TIMESTAMP,
+      id_user_crear INT,
+      fecha_creado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  
+  try {
+    const client = await conexion.connect();
+    await client.query(consulta);
+    console.log(`Tabla: ${tablaEmpleados} creada/verificada...`);
+    client.release();
+  } catch (error) {
+    console.log("Error al crear la tabla:", error);
+  }
+}
+
