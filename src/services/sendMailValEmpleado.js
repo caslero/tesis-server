@@ -24,8 +24,7 @@ export async function sendMail(correo, nombre, validarUsuario) {
 }
 */
 
-
- /** La const transporte es la encargada de hacer la conexion con mailtrap, la
+/** La const transporte es la encargada de hacer la conexion con mailtrap, la
  cual es un simulador para enviar correos */
 export class EnviarCorreo {
   /** sendMail es para enviar correo al momento de registrar un empleado */
@@ -70,6 +69,22 @@ export class EnviarCorreo {
 
     return info;
   }
+
+  static async sendMailCrearClave(correo, nombre, validarUsuario) {
+    const transporte = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.CORREO_REMITENTE,
+        pass: process.env.PASSWORD_REMITENTE,
+      },
+    });
+
+    const info = await transporte.sendMail({
+      from: `${process.env.NOMBRE_REMITENTE} <${process.env.CORREO_REMITENTE}>`,
+      to: `${correo}`,
+      subject: `Hola ${nombre}, bienvenido a Nutrivida...`,
+      html: `${htmlEmail(validarUsuario)}`,
+    });
+    return info;
+  }
 }
-
-

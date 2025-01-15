@@ -59,7 +59,8 @@ export class EmpleadosControlador {
       
 
       if (crearEmpleado) {
-        EnviarCorreo.sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+        //EnviarCorreo.sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
+        EnviarCorreo.sendMailCrearClave(correo, primerNombre, tokenUnicoValidarEmpleado);
 
         return res.status(201).json({
           status: "ok",
