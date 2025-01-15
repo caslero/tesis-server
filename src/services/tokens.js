@@ -65,6 +65,10 @@ export class Tokens {
   static descifrarToken(token) {
     try {
       const descifrada = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+      console.log(token);
+      console.log(descifrada);
+      
+      
       return {
         status: "ok",
         numero: 1,
