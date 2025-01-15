@@ -35,9 +35,12 @@ export class EmpleadosControlador {
       }
 
       const tokenUnicoValidarEmpleado = Tokens.tokenValidarUsuario(10);
-      
+      console.log('Linea 38 empleados controller: ' + token);
       
       const tokenDecodificado = Tokens.descifrarToken(token);
+
+      console.log('tokenDecodificado linea 42-43');
+      console.log(tokenDecodificado);
       
       if (tokenDecodificado.status === "error") {
         return res.status(400).json({
