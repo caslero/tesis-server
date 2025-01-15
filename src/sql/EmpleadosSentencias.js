@@ -7,9 +7,10 @@ export function guardarEmpleado(req, token, id_user) {
 
 /** datosUsuarioActivo es la sentencia sql para consultar datos del user activo*/
 export function datosUsuarioActivo(correo) {
-  const usuarioActivo = `SELECT cedula, primer_nombre, primer_apellido, correo, tipo_usuario FROM empleados WHERE correo = '${correo}'`;
+  const usuarioActivo = `SELECT cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_ingreso, correo, telefono, estado, municipio, parroquia, direccion, tipo_usuario FROM empleados WHERE correo = '${correo}'`;
   return usuarioActivo;
 }
+
 
 /** inicioSesionDatos es la sentencia sql para traer los datos para el 
   inicio de sesion */

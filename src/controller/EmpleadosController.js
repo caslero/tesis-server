@@ -14,7 +14,6 @@ export class EmpleadosControlador {
     try {
       const { cedula, primerNombre, correo, token } = req.body;
 
-      
       const validandoCampos = validarCampos(req);
       const existeEmpleado = await ModeloEmpleados.empleadoExiste(cedula);
 
@@ -35,13 +34,13 @@ export class EmpleadosControlador {
       }
 
       const tokenUnicoValidarEmpleado = Tokens.tokenValidarUsuario(10);
-      console.log('Linea 38 empleados controller: ' + token);
-      
+      console.log("Linea 38 empleados controller: " + token);
+
       const tokenDecodificado = Tokens.descifrarToken(token);
 
-      console.log('tokenDecodificado linea 42-43');
+      console.log("tokenDecodificado linea 42-43");
       console.log(tokenDecodificado);
-      
+
       if (tokenDecodificado.status === "error") {
         return res.status(400).json({
           status: "error",
@@ -50,8 +49,10 @@ export class EmpleadosControlador {
         });
       }
 
-      const { id }  = await ModeloEmpleados.datosInicioSesion(tokenDecodificado.correo);
-     
+      const { id } = await ModeloEmpleados.datosInicioSesion(
+        tokenDecodificado.correo
+      );
+
       const crearEmpleado = await ModeloEmpleados.registrarEmpleado(
         req,
         tokenUnicoValidarEmpleado,
@@ -59,11 +60,14 @@ export class EmpleadosControlador {
       );
 
       console.log(crearEmpleado);
-      
 
       if (crearEmpleado) {
         //EnviarCorreo.sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
-        EnviarCorreo.sendMailCrearClave(correo, primerNombre, tokenUnicoValidarEmpleado);
+        EnviarCorreo.sendMailCrearClave(
+          correo,
+          primerNombre,
+          tokenUnicoValidarEmpleado
+        );
 
         return res.status(201).json({
           status: "ok",
@@ -186,8 +190,6 @@ export class EmpleadosControlador {
     try {
       const { token } = req.body;
 
-      //const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJjYXJsb3NqcGVyYXphYkBnbWFpbC5jb20iLCJpYXQiOjE3MzY3MTY5MjEsImV4cCI6MTczNjgwMzMyMX0.yUWR6EKSxIs2EPCWPutDBcRTa-7iMyUpHPDjhfv0SY1'
-
       if (!token) {
         return res.status(400).json({
           status: "error",
@@ -224,6 +226,71 @@ export class EmpleadosControlador {
         message: "Error al procesar token...",
         isValido: false,
       });
+    }
+  }
+
+  static async usuarioActivo(req, res) {
+    try {
+      const { token } = req.body;
+
+      const tokenDescifrado = Tokens.descifrarToken(token);
+
+      if (tokenDescifrado.status === "error") {
+        return res.status(400).json({
+          status: tokenDescifrado.status,
+          numero: tokenDescifrado.numero,
+          message: tokenDescifrado.message,
+        });
+      }
+
+      const datosUsuarioActivo = await ModeloEmpleados.usuarioActivo(
+        tokenDescifrado.correo
+      );
+console.log(datosUsuarioActivo);
+
+      if (datosUsuarioActivo) {
+        return res.status(201).json({
+          status: "ok",
+          numero: 1,
+          message: "Usuario activo",
+          datos: datosUsuarioActivo,
+        });
+      } else {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "No hay datos de usuario",
+        });
+      }
+    } catch (error) {
+      console.log("Error, al consultar user activo: " + error);
+      return res.status(500).json({
+        status: "error",
+        numero: 0,
+        message: "Error, al consultar user activo...",
+      });
+    }
+  }
+
+  static async cambiarClaveUsuarioLogueado(req, res) {
+    try {
+      const { claveVieja, claveNuevaUno, claveNuevaDos, token } = req.body;
+
+      console.log(claveVieja, claveNuevaUno, claveNuevaDos, token);
+      return res.status(201).json({
+        status: "ok",
+        numero: 1,
+        message: "Clave cambiada con exito..."
+      })     
+      
+      
+    } catch (error) {
+      console.log("Error, al cambiar clave logueado: " + error);
+      return res.status(500).json({
+        status: "error",
+        numero: 0,
+        message: "Error al cambiar clave"
+      })      
     }
   }
 }

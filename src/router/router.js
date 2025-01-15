@@ -12,4 +12,7 @@ rutas.post("/api/registrar-empleado", EmpleadosControlador.registrarEmpleado);
 rutas.post("/validar/token", EmpleadosControlador.autenticarUsuario);
 rutas.post("/api/registrar-clave", EmpleadosControlador.crearClave);
 rutas.post("/api/verificar-autenticacion", EmpleadosControlador.verificarAutenticacion);
+rutas.post("/api/usuario-activo", EmpleadosControlador.usuarioActivo);
+rutas.post("/api/cambiar-clave-logueado", EmpleadosControlador.cambiarClaveUsuarioLogueado);
+
 rutas.post("/api/iniciar-sesion", LoginControlador.iniciarSesion);

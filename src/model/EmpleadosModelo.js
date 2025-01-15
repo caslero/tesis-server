@@ -32,7 +32,7 @@ export class ModeloEmpleados {
     return new Promise((resolve) => {
       conexion.query(datosUsuarioActivo(correo), function (error, resultado) {
         if (!error) {
-          resolve(resultado[0]);
+          resolve(resultado.rows[0]);
         } else {
           resolve(false);
         }
@@ -100,4 +100,5 @@ export class ModeloEmpleados {
       });
     });
   }
+  
 }
