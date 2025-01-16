@@ -11,14 +11,12 @@ export function datosUsuarioActivo(correo) {
   return usuarioActivo;
 }
 
-
 /** inicioSesionDatos es la sentencia sql para traer los datos para el 
   inicio de sesion */
 export function inicioSesionDatos(correo) {
   const usuarioActivo = `SELECT id, correo, clave, tipo_usuario FROM empleados WHERE correo = '${correo}'`;
   return usuarioActivo;
 }
-
 
 /** existeEmpleado es la sentencia sql para consultar si existe o no un empleado*/
 export function existeEmpleado(cedula) {
@@ -41,16 +39,25 @@ export function tokenComprobar(token) {
   return comprobarToken;
 }
 
-
 /** guardarEmpleado es la sentencia sql para registrar un empleado */
 export function claveEmpleadoCrear(clave, token) {
   const crearClaveEmpleado = `UPDATE empleados SET clave = '${clave}', validar = 'true', fecha_clave_creada = NOW() WHERE token = '${token}'`;
   return crearClaveEmpleado;
 }
 
+/** obtenerClaveParaCambiarla es la sentencia sql para consultar una clave y
+  compararla de manera que si es correcta se pueda hacer el cambio de clave */
+export function obtenerClaveParaCambiarla(correo) {
+    const claveCambiar = `SELECT clave FROM empleados WHERE correo = '${correo}'`;
+    return claveCambiar;
+}
 
-
-
+/** claveCambiadaUsuarioLogueado es la sentencia sql para cambiar la clave de
+  un usuario cuando el mismo este logueado */
+export function claveCambiadaUsuarioLogueado(clave, correo) {
+  const claveCambiada = `UPDATE empleados SET clave = '${clave}' WHERE correo = '${correo}'`;
+  return claveCambiada;
+}
 
 
 

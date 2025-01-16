@@ -34,12 +34,8 @@ export class EmpleadosControlador {
       }
 
       const tokenUnicoValidarEmpleado = Tokens.tokenValidarUsuario(10);
-      console.log("Linea 38 empleados controller: " + token);
 
       const tokenDecodificado = Tokens.descifrarToken(token);
-
-      console.log("tokenDecodificado linea 42-43");
-      console.log(tokenDecodificado);
 
       if (tokenDecodificado.status === "error") {
         return res.status(400).json({
@@ -140,9 +136,9 @@ export class EmpleadosControlador {
 
   static async crearClave(req, res) {
     try {
-      const { clave, token } = req.body;
+      const { clave, claveDos, token } = req.body;
 
-      const claveValidada = validarClaveAccesoEmpleado(req);
+      const claveValidada = validarClaveAccesoEmpleado(clave, claveDos);
 
       if (claveValidada.status === "error") {
         return res.status(400).json({
@@ -246,7 +242,7 @@ export class EmpleadosControlador {
       const datosUsuarioActivo = await ModeloEmpleados.usuarioActivo(
         tokenDescifrado.correo
       );
-console.log(datosUsuarioActivo);
+      console.log(datosUsuarioActivo);
 
       if (datosUsuarioActivo) {
         return res.status(201).json({
@@ -276,21 +272,76 @@ console.log(datosUsuarioActivo);
     try {
       const { claveVieja, claveNuevaUno, claveNuevaDos, token } = req.body;
 
-      console.log(claveVieja, claveNuevaUno, claveNuevaDos, token);
-      return res.status(201).json({
-        status: "ok",
-        numero: 1,
-        message: "Clave cambiada con exito..."
-      })     
-      
-      
+      const formatoDeClaveCorrecto = validarClaveAccesoEmpleado(
+        claveNuevaUno,
+        claveNuevaDos
+      );
+
+      if (formatoDeClaveCorrecto.status === "error") {
+        return res.status(400).json({
+          status: formatoDeClaveCorrecto.status,
+          numero: formatoDeClaveCorrecto.numero,
+          message: formatoDeClaveCorrecto.message,
+        });
+      }
+
+      const tokenDecodificado = Tokens.descifrarToken(token);
+      const { correo } = tokenDecodificado;
+
+      if (tokenDecodificado.status === "error") {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error al cambiar la clave...",
+        });
+      }
+
+      const { clave } = await ModeloEmpleados.obtenerClaveActual(correo);
+      if (!clave) {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error al intentar cammbio de clave...",
+        });
+      }
+
+      const claveValida = await bcryptjs.compare(claveVieja, clave);
+      if (!claveValida) {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error, clave actual invalida...",
+        });
+      }
+
+      const encriptado = await bcryptjs.genSalt(5);
+      const claveEncriptada = await bcryptjs.hash(claveNuevaUno, encriptado);
+
+      const claveCambiada = await ModeloEmpleados.claveCambiadaUsuarioLogueado(
+        claveEncriptada,
+        correo
+      );
+
+      if (claveCambiada) {
+        return res.status(201).json({
+          status: "ok",
+          numero: 1,
+          message: "Clave cambiada con exito...",
+        });
+      } else {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error, no se cambio la clave...",
+        });
+      }
     } catch (error) {
       console.log("Error, al cambiar clave logueado: " + error);
       return res.status(500).json({
         status: "error",
         numero: 0,
-        message: "Error al cambiar clave"
-      })      
+        message: "Error al cambiar clave",
+      });
     }
   }
 }

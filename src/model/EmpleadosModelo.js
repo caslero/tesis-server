@@ -5,7 +5,7 @@ import {
   inicioSesionDatos,
   existeEmpleado,
   tokenComprobar,
-  claveEmpleadoCrear,
+  claveEmpleadoCrear, obtenerClaveParaCambiarla, claveCambiadaUsuarioLogueado
 } from "../sql/EmpleadosSentencias.js";
 
 export class ModeloEmpleados {
@@ -100,5 +100,37 @@ export class ModeloEmpleados {
       });
     });
   }
-  
+
+
+/** La funcion obtenerClaveActual se encarga de traer la clave de un usuario
+  logueado, la misma servira para registrar una nueva clave de acceso */
+    static async obtenerClaveActual(correo) {
+      return new Promise((resolve) => {
+        conexion.query(obtenerClaveParaCambiarla(correo), function (error, resultado) {
+          if (!error) {
+            resolve(resultado.rows[0]);
+          } else {
+            resolve(false);
+          }
+        });
+      });
+    }
+
+
+    /** La funcion claveCambiadaUsuarioLogueado guardara la nueva clave que
+      el usuario cambio */
+  static async claveCambiadaUsuarioLogueado(clave, correo) {
+    return new Promise((resolve) => {
+      conexion.query(claveCambiadaUsuarioLogueado(clave, correo),
+        function (error, resultado) {
+          if (!error) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      );
+    });
+  }
+
 }
