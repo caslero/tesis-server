@@ -5,7 +5,8 @@ import {
   inicioSesionDatos,
   existeEmpleado,
   tokenComprobar,
-  claveEmpleadoCrear, obtenerClaveParaCambiarla, claveCambiadaUsuarioLogueado
+  claveEmpleadoCrear, obtenerClaveParaCambiarla, claveCambiadaUsuarioLogueado,
+  empleadosTodos
 } from "../sql/EmpleadosSentencias.js";
 
 export class ModeloEmpleados {
@@ -131,6 +132,20 @@ export class ModeloEmpleados {
         }
       );
     });
+  }
+
+
+
+  static async todosLosEmpleados(correo) {
+    return new Promise((resolve) => {
+      conexion.query(empleadosTodos(correo), function (error, resultado) {
+        if (!error) {
+          resolve(resultado.rows);
+        } else {
+          resolve(false);
+        }
+      })
+    })
   }
 
 }

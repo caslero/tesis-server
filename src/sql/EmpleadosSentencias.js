@@ -59,7 +59,11 @@ export function claveCambiadaUsuarioLogueado(clave, correo) {
   return claveCambiada;
 }
 
-
+/** empleadosTodos es la sentencia sql para consultar todos los empleados */
+  export function empleadosTodos(correo) {
+    const todosEmpleados = `SELECT id, cedula, correo, direccion, estado, fecha_ingreso, fecha_creado, municipio, parroquia, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, telefono, tipo_usuario FROM empleados ORDER BY cedula ASC`;
+    return todosEmpleados;
+  }
 
 
 

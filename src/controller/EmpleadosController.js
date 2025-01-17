@@ -55,8 +55,6 @@ export class EmpleadosControlador {
         id
       );
 
-      console.log(crearEmpleado);
-
       if (crearEmpleado) {
         //EnviarCorreo.sendMail(correo, primerNombre, tokenUnicoValidarEmpleado);
         EnviarCorreo.sendMailCrearClave(
@@ -242,7 +240,6 @@ export class EmpleadosControlador {
       const datosUsuarioActivo = await ModeloEmpleados.usuarioActivo(
         tokenDescifrado.correo
       );
-      console.log(datosUsuarioActivo);
 
       if (datosUsuarioActivo) {
         return res.status(201).json({
@@ -341,6 +338,47 @@ export class EmpleadosControlador {
         status: "error",
         numero: 0,
         message: "Error al cambiar clave",
+      });
+    }
+  }
+
+  static async consultarTodosEmpleados(req, res) {
+    try {
+      const { token } = req.body;
+      const descifrarToken = Tokens.descifrarToken(token);
+
+      if (descifrarToken.status === "error") {
+        return res.status(400).json({
+          status: descifrarToken.status,
+          numero: descifrarToken.numero,
+          message: descifrarToken.message,
+        });
+      }
+
+      const todosLosEmpleados = await ModeloEmpleados.todosLosEmpleados(
+        descifrarToken.correo
+      );
+
+      if (!todosLosEmpleados) {
+        return res.status(400).json({
+          status: "error",
+          numero: 0,
+          message: "Error al mostrar empleados...",
+        });
+      } else {
+        return res.status(201).json({
+          status: "ok",
+          numero: 1,
+          message: "Todos los empleados...",
+          todosLosEmpleados: todosLosEmpleados,
+        });
+      }
+    } catch (error) {
+      console.log("Error, al consultar empleados: " + error);
+      return res.status(500).json({
+        status: "error",
+        numero: 0,
+        message: "Error al consultar empleados...",
       });
     }
   }
