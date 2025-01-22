@@ -1,4 +1,4 @@
-import { createConnection } from "mysql";
+//import { createConnection } from "mysql";
 import pg from 'pg';
 import dotenv from "dotenv";
 import { crearTablaEmpleados, crearTablaEmpleadosLocal } from "../db_tablas/tablaEmpleados.js";

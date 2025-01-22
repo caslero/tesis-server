@@ -35,6 +35,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Algo salió mal!');
+});
+
 app.use(express.json());
 
 conectar()
